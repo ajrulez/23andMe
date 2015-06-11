@@ -14,16 +14,17 @@ import java.util.ArrayList;
  */
 public class InstagramPopularPictureParserJson implements IPopularImageParser {
     private final static String TAG = "InstagrameParser";
+
     /**
      * For now, I am using standard JSON libraries to
      * parse the data.
-     *
+     * <p/>
      * Another option is to use Gson. If I have time towards the
      * end of this assignment, I will switch to Gson
      */
 
     public ArrayList<PopularPicturesModel> parse(JSONObject jsonObj) {
-        if(jsonObj == null ||
+        if (jsonObj == null ||
                 jsonObj.length() <= 0) {
             return null;
         }
@@ -31,18 +32,18 @@ public class InstagramPopularPictureParserJson implements IPopularImageParser {
         ArrayList<PopularPicturesModel> popularPictures =
                 new ArrayList<PopularPicturesModel>();
 
-        try {
-            // Get the JSONArray named "data" from the root object
-            JSONArray dataArray = jsonObj.optJSONArray("data");
+        // Get the JSONArray named "data" from the root object
+        JSONArray dataArray = jsonObj.optJSONArray("data");
 
-            if (dataArray != null &&
-                    dataArray.length() > 0) {
-                // For each JSONObject in the dataArray, retrieve the
-                // data as needed by PopularPicturesModel
-                for (int count = 0; count < dataArray.length(); count++) {
+        if (dataArray != null &&
+                dataArray.length() > 0) {
+            // For each JSONObject in the dataArray, retrieve the
+            // data as needed by PopularPicturesModel
+            for (int count = 0; count < dataArray.length(); count++) {
+                try {
                     JSONObject pictureObj = dataArray.optJSONObject(count);
 
-                    if(pictureObj != null) {
+                    if (pictureObj != null) {
                         PopularPicturesModel pictureModel = new PopularPicturesModel();
 
                         String imageUrlLowRes = "";
@@ -50,16 +51,16 @@ public class InstagramPopularPictureParserJson implements IPopularImageParser {
 
                         // Get the Link to the Image
                         JSONObject imagesObj = pictureObj.optJSONObject("images");
-                        if(imagesObj != null) {
+                        if (imagesObj != null) {
                             // Get the low-resolution image
                             JSONObject lowResolutionObj = imagesObj.optJSONObject("low_resolution");
                             JSONObject standardResolutionObj = imagesObj.optJSONObject("standard_resolution");
 
-                            if(lowResolutionObj != null) {
+                            if (lowResolutionObj != null) {
                                 imageUrlLowRes = lowResolutionObj.optString("url");
                             }
 
-                            if(standardResolutionObj != null) {
+                            if (standardResolutionObj != null) {
                                 imageUrlStandardRes = standardResolutionObj.optString("url");
                             }
                         }
@@ -74,13 +75,13 @@ public class InstagramPopularPictureParserJson implements IPopularImageParser {
 
                         // Get the caption text from caption object
                         JSONObject captionObj = pictureObj.optJSONObject("caption");
-                        if(captionObj != null) {
+                        if (captionObj != null) {
                             captionText = captionObj.optString("text", "");
                         }
 
                         // Add to the collection after checking for some
                         // basic required values
-                        if(! Utils.isNullOrEmpty(imageUrlLowRes) &&
+                        if (!Utils.isNullOrEmpty(imageUrlLowRes) &&
                                 !Utils.isNullOrEmpty(id)) {
 
                             pictureModel.setPictureUrl(imageUrlLowRes);
@@ -92,11 +93,11 @@ public class InstagramPopularPictureParserJson implements IPopularImageParser {
                             popularPictures.add(pictureModel);
                         }
                     }
+                } catch (Exception e) {
+                    android.util.Log.e(TAG, "Exception when parsing the data " + e);
+                    continue;
                 }
             }
-        }
-        catch (Exception e) {
-            android.util.Log.e(TAG, "Exception when parsing the data " + e);
         }
 
         return popularPictures;
