@@ -13,6 +13,7 @@ import android.widget.TextView;
 
 import com.alifesoftware.instaassignment.R;
 import com.alifesoftware.instaassignment.model.PopularPicturesModel;
+import com.alifesoftware.instaassignment.utils.Constants;
 import com.alifesoftware.instaassignment.viewholders.PopularPicturesViewHolder;
 
 import java.util.ArrayList;
@@ -23,7 +24,6 @@ import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
 import com.nostra13.universalimageloader.core.assist.ImageScaleType;
 import com.nostra13.universalimageloader.core.display.FadeInBitmapDisplayer;
-import com.squareup.picasso.Picasso;
 
 /**
  * Created by anujsaluja on 6/10/15.
@@ -132,15 +132,14 @@ public class PopularPicturesAdapter extends ArrayAdapter<PopularPicturesModel> {
             // While we load the Image in the ImageView, set a default Image
             holder.ivImage.setImageDrawable(appContext.getResources().getDrawable(R.mipmap.ic_launcher));
 
-            String imageUrl = arrPictureData.get(position).getPictureUrl();
-            // Issue the LazyLoad Request to UIL
-            /*Picasso.with(appContext)
-                    .load(imageUrl)
-                    .resize(150, 150)
-                    .centerCrop()
-                    .into(holder.ivImage);*/
-            //Picasso.with(appContext).load(arrPictureData.get(position).getPictureUrl()).into(holder.ivImage);
-            imageLoader.displayImage(arrPictureData.get(position).getPictureUrl(), holder.ivImage);
+            String imageUrl = "";
+            if(Constants.showHighResolutionImages) {
+                imageUrl = arrPictureData.get(position).getHighResPictureUrl();
+            }
+            else {
+                imageUrl = arrPictureData.get(position).getPictureUrl();
+            }
+            imageLoader.displayImage(imageUrl, holder.ivImage);
 
             // Add the ID of the image as a Tag for the button so when
             // the button is clicked, we can get the ID from the button
@@ -150,8 +149,7 @@ public class PopularPicturesAdapter extends ArrayAdapter<PopularPicturesModel> {
             // Disable the Like button is user has already liked it
             if(arrPictureData.get(position).isHasUserLiked()) {
                 holder.btnLike.setEnabled(false);
-            }
-            else {
+            } else {
                 holder.btnLike.setEnabled(true);
             }
         }

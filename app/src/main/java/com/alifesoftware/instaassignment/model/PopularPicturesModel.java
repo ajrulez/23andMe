@@ -27,6 +27,9 @@ public class PopularPicturesModel implements Parcelable  {
     // URL of the picture
     private String pictureUrl;
 
+    // URL of the picture in high-res/standard-res
+    private String pictureUrlHighRes;
+
     // Flag to indicate whether current user has liked the picture
     private boolean hasUserLiked;
 
@@ -104,6 +107,14 @@ public class PopularPicturesModel implements Parcelable  {
 
     public void setPictureUrl(String pictureUrl) {
         this.pictureUrl = pictureUrl;
+    }
+
+    public String getHighResPictureUrl() {
+        return pictureUrlHighRes;
+    }
+
+    public void setHighResPictureUrl(String pictureUrl) {
+        pictureUrlHighRes = pictureUrl;
     }
 
     public boolean isHasUserLiked() {

@@ -27,4 +27,6 @@ public class Constants {
 
     public static final float[] LANDSCAPE = { 480, 340 };
     public static final float[] PORTRAIT = { 340, 340 };
+
+    public static boolean showHighResolutionImages = true;
 }

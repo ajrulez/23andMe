@@ -40,13 +40,29 @@ public class InstagramPopularPictureParserJson implements IPopularImageParser {
                 // For each JSONObject in the dataArray, retrieve the
                 // data as needed by PopularPicturesModel
                 for (int count = 0; count < dataArray.length(); count++) {
-                    JSONObject pictureObj = dataArray.getJSONObject(count);
+                    JSONObject pictureObj = dataArray.optJSONObject(count);
 
                     if(pictureObj != null) {
                         PopularPicturesModel pictureModel = new PopularPicturesModel();
 
+                        String imageUrlLowRes = "";
+                        String imageUrlStandardRes = "";
+
                         // Get the Link to the Image
-                        String imageUrl = pictureObj.optString("link", "");
+                        JSONObject imagesObj = pictureObj.optJSONObject("images");
+                        if(imagesObj != null) {
+                            // Get the low-resolution image
+                            JSONObject lowResolutionObj = imagesObj.optJSONObject("low_resolution");
+                            JSONObject standardResolutionObj = imagesObj.optJSONObject("standard_resolution");
+
+                            if(lowResolutionObj != null) {
+                                imageUrlLowRes = lowResolutionObj.optString("url");
+                            }
+
+                            if(standardResolutionObj != null) {
+                                imageUrlStandardRes = standardResolutionObj.optString("url");
+                            }
+                        }
 
                         // Get the ID
                         String id = pictureObj.optString("id", "-1");
@@ -64,10 +80,11 @@ public class InstagramPopularPictureParserJson implements IPopularImageParser {
 
                         // Add to the collection after checking for some
                         // basic required values
-                        if(! Utils.isNullOrEmpty(imageUrl) &&
+                        if(! Utils.isNullOrEmpty(imageUrlLowRes) &&
                                 !Utils.isNullOrEmpty(id)) {
 
-                            pictureModel.setPictureUrl(imageUrl);
+                            pictureModel.setPictureUrl(imageUrlLowRes);
+                            pictureModel.setHighResPictureUrl(imageUrlStandardRes);
                             pictureModel.setPictureId(id);
                             pictureModel.setPictureCaption(captionText);
                             pictureModel.setHasUserLiked(userHasLiked);
