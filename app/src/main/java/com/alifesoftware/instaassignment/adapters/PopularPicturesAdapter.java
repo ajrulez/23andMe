@@ -23,6 +23,7 @@ import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
 import com.nostra13.universalimageloader.core.assist.ImageScaleType;
 import com.nostra13.universalimageloader.core.display.FadeInBitmapDisplayer;
+import com.squareup.picasso.Picasso;
 
 /**
  * Created by anujsaluja on 6/10/15.
@@ -131,7 +132,14 @@ public class PopularPicturesAdapter extends ArrayAdapter<PopularPicturesModel> {
             // While we load the Image in the ImageView, set a default Image
             holder.ivImage.setImageDrawable(appContext.getResources().getDrawable(R.mipmap.ic_launcher));
 
+            String imageUrl = arrPictureData.get(position).getPictureUrl();
             // Issue the LazyLoad Request to UIL
+            /*Picasso.with(appContext)
+                    .load(imageUrl)
+                    .resize(150, 150)
+                    .centerCrop()
+                    .into(holder.ivImage);*/
+            //Picasso.with(appContext).load(arrPictureData.get(position).getPictureUrl()).into(holder.ivImage);
             imageLoader.displayImage(arrPictureData.get(position).getPictureUrl(), holder.ivImage);
 
             // Add the ID of the image as a Tag for the button so when

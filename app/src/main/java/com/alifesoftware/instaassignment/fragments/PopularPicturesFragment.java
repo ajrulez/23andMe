@@ -3,6 +3,7 @@ package com.alifesoftware.instaassignment.fragments;
 
 import android.app.ProgressDialog;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -11,14 +12,16 @@ import android.view.Window;
 import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.ListView;
-import android.widget.RelativeLayout;
 import android.widget.Toast;
 
 import com.alifesoftware.instaassignment.R;
 import com.alifesoftware.instaassignment.adapters.PopularPicturesAdapter;
+import com.alifesoftware.instaassignment.interfaces.ILikeResultListener;
 import com.alifesoftware.instaassignment.interfaces.IPopularPicturesReceiver;
 import com.alifesoftware.instaassignment.model.PopularPicturesModel;
+import com.alifesoftware.instaassignment.tasks.InstagramPictureLikeTask;
 import com.alifesoftware.instaassignment.tasks.InstagramPopularPicturesTask;
+import com.alifesoftware.instaassignment.utils.Utils;
 
 import java.util.ArrayList;
 
@@ -27,6 +30,7 @@ import java.util.ArrayList;
  */
 public class PopularPicturesFragment extends Fragment
                                     implements IPopularPicturesReceiver,
+                                                ILikeResultListener,
                                                 View.OnClickListener {
     // ListView to display Popular Pictures
     private ListView lvPicturesList;
@@ -36,6 +40,12 @@ public class PopularPicturesFragment extends Fragment
 
     // Progress Dialog
     private ProgressDialog progressDialog;
+
+    // Handler
+    private final Handler handler = new Handler();
+
+    // Delay for updating the Button
+    private final long UPDATE_DELAY = 300; // ms
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -83,6 +93,25 @@ public class PopularPicturesFragment extends Fragment
 
     @Override
     public void onClick(View v) {
+        if(v instanceof Button) {
+            String imageId = (String) v.getTag();
+            if(! Utils.isNullOrEmpty(imageId)) {
+                InstagramPictureLikeTask pictureLikeTask = new InstagramPictureLikeTask(getActivity(), (Button) v, this);
+                pictureLikeTask.execute(new String[] {imageId});
+            }
+        }
+    }
 
+    @Override
+    public void onLikeCompleted(boolean success, final Button button) {
+        if(success &&
+                button != null) {
+            handler.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    button.setEnabled(false);
+                }
+            }, UPDATE_DELAY);
+        }
     }
 }
