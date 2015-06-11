@@ -26,8 +26,12 @@ public class MainActivity extends AppCompatActivity implements IPopularPicturesV
         setContentView(R.layout.activity_main);
         fragmentContainer = (FrameLayout) findViewById(R.id.fragment_container);
 
-        // Load the appropriate Fragment
-        loadFragment(this);
+        // Avoid duplicate Fragments when state changes
+        if (savedInstanceState == null)
+        {
+            // Load the appropriate Fragment
+            loadFragment(this);
+        }
     }
 
     private void loadFragment(Context ctx) {

@@ -157,4 +157,8 @@ public class PopularPicturesAdapter extends ArrayAdapter<PopularPicturesModel> {
         return convertView;
     }
 
+    public ArrayList<PopularPicturesModel> getData() {
+        return arrPictureData;
+    }
+
 }
