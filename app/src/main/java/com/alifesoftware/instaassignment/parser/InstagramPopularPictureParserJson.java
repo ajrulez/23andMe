@@ -73,7 +73,7 @@ public class InstagramPopularPictureParserJson implements IPopularImageParser {
                         String captionText = "";
 
                         // Get the caption text from caption object
-                        JSONObject captionObj = pictureObj.getJSONObject("caption");
+                        JSONObject captionObj = pictureObj.optJSONObject("caption");
                         if(captionObj != null) {
                             captionText = captionObj.optString("text", "");
                         }
@@ -96,7 +96,7 @@ public class InstagramPopularPictureParserJson implements IPopularImageParser {
             }
         }
         catch (Exception e) {
-            android.util.Log.e(TAG, "Exception when parsing the data" + e);
+            android.util.Log.e(TAG, "Exception when parsing the data " + e);
         }
 
         return popularPictures;
