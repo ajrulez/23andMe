@@ -13,10 +13,11 @@ import com.alifesoftware.instaassignment.R;
 import com.alifesoftware.instaassignment.businesslogic.SessionManager;
 import com.alifesoftware.instaassignment.fragments.LoginFragment;
 import com.alifesoftware.instaassignment.fragments.PopularPicturesFragment;
+import com.alifesoftware.instaassignment.interfaces.IPopularPicturesViewSwitcher;
 import com.alifesoftware.instaassignment.utils.Constants;
 
-public class MainActivity extends AppCompatActivity {
-    // FrameLayout - Fragment Containet
+public class MainActivity extends AppCompatActivity implements IPopularPicturesViewSwitcher {
+    // FrameLayout - Fragment Container
     private FrameLayout fragmentContainer = null;
 
     @Override
@@ -81,5 +82,13 @@ public class MainActivity extends AppCompatActivity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void switchToPopularPicturesView() {
+        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+        PopularPicturesFragment popularPicturesFragment = new PopularPicturesFragment();
+        transaction.replace(fragmentContainer.getId(), popularPicturesFragment)
+                   .commit();
     }
 }

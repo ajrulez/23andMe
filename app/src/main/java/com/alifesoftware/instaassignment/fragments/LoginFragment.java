@@ -1,5 +1,6 @@
 package com.alifesoftware.instaassignment.fragments;
 
+import android.app.Activity;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -10,9 +11,9 @@ import android.widget.RelativeLayout;
 import android.widget.Toast;
 
 import com.alifesoftware.instaassignment.R;
-import com.alifesoftware.instaassignment.activities.MainActivity;
 import com.alifesoftware.instaassignment.businesslogic.InstagramClient;
 import com.alifesoftware.instaassignment.interfaces.IOauthListener;
+import com.alifesoftware.instaassignment.interfaces.IPopularPicturesViewSwitcher;
 
 /**
  * Created by anujsaluja on 6/10/15.
@@ -40,16 +41,23 @@ public class LoginFragment extends Fragment {
         instaClient.setListener(new IOauthListener() {
             @Override
             public void onSuccess() {
-                int ajs = 10;
-                ajs++;
-                // TODO
+                // Tell the Activity to switch Fragment
+                Activity mainActivity = getActivity();
+                // Check is the Activity implements IPopularPicturesViewSwitcher
+                if(IPopularPicturesViewSwitcher.class.isAssignableFrom(mainActivity.getClass())) {
+                    IPopularPicturesViewSwitcher switcher = (IPopularPicturesViewSwitcher) mainActivity;
+                    switcher.switchToPopularPicturesView();
+                }
+                else {
+                    Toast.makeText(getActivity(), getActivity().getResources().getString(R.string.no_popularpicture_switcher),
+                            Toast.LENGTH_LONG).show();
+                }
             }
 
             @Override
             public void onFail(String error) {
-                int ajs = 10;
-                ajs++;
-                // TODO
+                // Show Error
+                Toast.makeText(getActivity(), error, Toast.LENGTH_LONG).show();
             }
         });
 

@@ -70,12 +70,10 @@ public class InstagramClient implements ITokenResultListener {
         if(success &&
                 !Utils.isNullOrEmpty(accessToken)) {
             sessionManager.storeAccessToken(accessToken);
+            oAuthListener.onSuccess();
         }
         else {
-            Toast.makeText(appContext,
-                    appContext.getResources().getString(R.string.failed_to_get_access_token),
-                    Toast.LENGTH_LONG)
-                    .show();
+            oAuthListener.onFail(appContext.getResources().getString(R.string.failed_to_get_access_token));
         }
     }
 

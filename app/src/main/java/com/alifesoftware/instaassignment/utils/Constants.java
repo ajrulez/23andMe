@@ -7,6 +7,7 @@ public class Constants {
     public static final String AUTH_URL = "https://api.instagram.com/oauth/authorize/";
     public static final String TOKEN_URL = "https://api.instagram.com/oauth/access_token";
     public static final String API_URL = "https://api.instagram.com/v1";
+    public static final String POPULAR_PHOTOS_URL = Constants.API_URL + "/media/popular?access_token=";
 
     //public static final String CLIENT_ID = "12a64b6f88fc4759ba9768d9f6358797";
     //public static final String CLIENT_SECRET = "d4406e9d0f25439288485774b80b1abf";

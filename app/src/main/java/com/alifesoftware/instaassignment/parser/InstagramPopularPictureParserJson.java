@@ -12,7 +12,7 @@ import java.util.ArrayList;
 /**
  * Created by anujsaluja on 6/10/15.
  */
-public class InstagramPopularPictureParser  implements IPopularImageParser {
+public class InstagramPopularPictureParserJson implements IPopularImageParser {
     private final static String TAG = "InstagrameParser";
     /**
      * For now, I am using standard JSON libraries to
