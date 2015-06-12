@@ -88,4 +88,11 @@ public class Constants {
 
     // This constant indicates whether we want to use UIL or Picaso for Lazy Loading images
     public static LazyImageLoaderType lazyLoaderToUse = LazyImageLoaderType.UNIVERSAL_IMAGE_LOADER;
+
+    // JSON Response for Popular Pictures also has some videos, and these
+    // videos also have iages that we can display. This flag indicates if
+    // we want to include videos or exclude vidoes
+    //
+    // Set to false to exclude videos
+    public static boolean includeVideosInPopularPictures = true;
 }

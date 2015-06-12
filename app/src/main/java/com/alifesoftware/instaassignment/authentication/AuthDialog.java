@@ -8,8 +8,6 @@ import android.graphics.Typeface;
 import android.os.Bundle;
 import android.view.ViewGroup;
 import android.view.Window;
-import android.webkit.CookieManager;
-import android.webkit.CookieSyncManager;
 import android.webkit.WebView;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
@@ -90,10 +88,6 @@ public class AuthDialog extends Dialog {
 
 
         addContentView(contentHolder, new LinearLayout.LayoutParams(windowWidth, windowHeight));
-
-        CookieSyncManager.createInstance(getContext());
-        CookieManager cookieManager = CookieManager.getInstance();
-        cookieManager.removeAllCookie();
     }
 
     /**

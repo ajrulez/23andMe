@@ -2,6 +2,7 @@ package com.alifesoftware.instaassignment.parser;
 
 import com.alifesoftware.instaassignment.interfaces.IPopularImageParser;
 import com.alifesoftware.instaassignment.model.PopularPicturesModel;
+import com.alifesoftware.instaassignment.utils.Constants;
 import com.alifesoftware.instaassignment.utils.Utils;
 
 import org.json.JSONArray;
@@ -70,47 +71,75 @@ public class InstagramPopularPictureParserJson implements IPopularImageParser {
                         String imageUrlStandardRes = "";
 
                         // Get the Link to the Image
-                        JSONObject imagesObj = pictureObj.optJSONObject("images");
-                        if (imagesObj != null) {
-                            // Get the low-resolution image
-                            JSONObject lowResolutionObj = imagesObj.optJSONObject("low_resolution");
-                            JSONObject standardResolutionObj = imagesObj.optJSONObject("standard_resolution");
+                        // Note: We also have type = video in JSON response
+                        // and Videos also have images, so I am not sure
+                        // if we want to ignore type=video or not
+                        //
+                        // Basically it is easy to ignore type=video - See below:
+                        //
 
-                            if (lowResolutionObj != null) {
-                                imageUrlLowRes = lowResolutionObj.optString("url");
-                            }
+                        String type = pictureObj.optString("type");
+                        boolean process = false;
 
-                            if (standardResolutionObj != null) {
-                                imageUrlStandardRes = standardResolutionObj.optString("url");
-                            }
+                        if(type.equalsIgnoreCase("image")) {
+                            process = true;
+                        }
+                        // If we want to NOT include the video type, and the
+                        // current type is video, then do not process this
+                        // entry
+                        //
+                        // Note: Current flag in Constants is set
+                        // to include videos
+                        else if(Constants.includeVideosInPopularPictures &&
+                                type.equalsIgnoreCase("video")) {
+                            process = true;
                         }
 
-                        // Get the ID
-                        String id = pictureObj.optString("id", "-1");
+                        // Ignore all other types that we don't know off
 
-                        // Get the user_has_liked flag
-                        boolean userHasLiked = pictureObj.optBoolean("user_has_liked", false);
+                        if(process) {
+                            JSONObject imagesObj = pictureObj.optJSONObject("images");
+                            if (imagesObj != null) {
+                                // Get the low-resolution image
+                                JSONObject lowResolutionObj = imagesObj.optJSONObject("low_resolution");
+                                JSONObject standardResolutionObj = imagesObj.optJSONObject("standard_resolution");
 
-                        String captionText = "";
+                                if (lowResolutionObj != null) {
+                                    imageUrlLowRes = lowResolutionObj.optString("url");
+                                }
 
-                        // Get the caption text from caption object
-                        JSONObject captionObj = pictureObj.optJSONObject("caption");
-                        if (captionObj != null) {
-                            captionText = captionObj.optString("text", "");
-                        }
+                                if (standardResolutionObj != null) {
+                                    imageUrlStandardRes = standardResolutionObj.optString("url");
+                                }
+                            }
 
-                        // Add to the collection after checking for some
-                        // basic required values
-                        if (!Utils.isNullOrEmpty(imageUrlLowRes) &&
-                                !Utils.isNullOrEmpty(id)) {
+                            // Get the ID
+                            String id = pictureObj.optString("id", "-1");
 
-                            pictureModel.setPictureUrl(imageUrlLowRes);
-                            pictureModel.setHighResPictureUrl(imageUrlStandardRes);
-                            pictureModel.setPictureId(id);
-                            pictureModel.setPictureCaption(captionText);
-                            pictureModel.setHasUserLiked(userHasLiked);
+                            // Get the user_has_liked flag
+                            boolean userHasLiked = pictureObj.optBoolean("user_has_liked", false);
 
-                            popularPictures.add(pictureModel);
+                            String captionText = "";
+
+                            // Get the caption text from caption object
+                            JSONObject captionObj = pictureObj.optJSONObject("caption");
+                            if (captionObj != null) {
+                                captionText = captionObj.optString("text", "");
+                            }
+
+                            // Add to the collection after checking for some
+                            // basic required values
+                            if (!Utils.isNullOrEmpty(imageUrlLowRes) &&
+                                    !Utils.isNullOrEmpty(id)) {
+
+                                pictureModel.setPictureUrl(imageUrlLowRes);
+                                pictureModel.setHighResPictureUrl(imageUrlStandardRes);
+                                pictureModel.setPictureId(id);
+                                pictureModel.setPictureCaption(captionText);
+                                pictureModel.setHasUserLiked(userHasLiked);
+
+                                popularPictures.add(pictureModel);
+                            }
                         }
                     }
                 } catch (Exception e) {
