@@ -1,6 +1,6 @@
 <resources>
     <string name="app_name">Instagram Assignment</string>
-    <string name="action_settings">Settings</string>
+    <string name="action_logoff">Log Off</string>
     <string name="like_picture">Like</string>
     <string name="login_text">Login to Instagram</string>
     <string name="please_wait">Please Wait</string>

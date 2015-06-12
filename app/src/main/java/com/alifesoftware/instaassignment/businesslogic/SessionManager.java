@@ -51,9 +51,9 @@ public class SessionManager {
      * Method to clear the AccessToken stored in the
      * SharedPreferences.
      *
-     * Note: Not being used currently, just added it here
-     * in case we want to support Log Off from
+     * Note: I couldn't find any API to log off from
      * Instagram
+     *
      */
     public void clearAccessToken() {
         prefEditor.putString(INSTAGRAM_ACCESS_TOKEN, null);

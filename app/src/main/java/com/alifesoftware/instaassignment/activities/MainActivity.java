@@ -3,6 +3,7 @@ package com.alifesoftware.instaassignment.activities;
 import android.content.Context;
 import android.content.pm.ActivityInfo;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Display;
@@ -30,6 +31,12 @@ import com.alifesoftware.instaassignment.utils.Constants;
 public class MainActivity extends AppCompatActivity implements IPopularPicturesViewSwitcher {
     // FrameLayout - Fragment Container
     private FrameLayout fragmentContainer = null;
+
+    // App Menu
+    private Menu appMenu = null;
+
+    // Current Fragment Name
+    private Fragment currentFragment = null;
 
     /**
      * onCreate method for Activity
@@ -77,22 +84,12 @@ public class MainActivity extends AppCompatActivity implements IPopularPicturesV
 
             // Load LoginFragment
             LoginFragment loginFragment = new LoginFragment();
-            Bundle args = new Bundle();
 
-            // Display is used to determine the size of WebView / Dialog
-            // that we want to display for initial step of Instagram
-            // Authentication
-            Display display = getWindow().getWindowManager().getDefaultDisplay();
-            final float scale = getResources().getDisplayMetrics().density;
-
-            float[] dimensions = (display.getWidth() < display.getHeight()) ? Constants.PORTRAIT
-                    : Constants.LANDSCAPE;
-
-            args.putInt(LoginFragment.ARGUMENTS_KEY_WIDTH, (int) (dimensions[0] * scale + 0.5f));
-            args.putInt(LoginFragment.ARGUMENTS_KEY_HEIGHT, (int) (dimensions[1] * scale + 0.5f));
+            // Update Current Fragment
+            setCurrentFragment(loginFragment);
 
             // Set arguments for the Fragment
-            loginFragment.setArguments(args);
+            addArgumentsToLoginFragment(loginFragment);
 
             // Add the Fragment to the Fragment Container View
             transaction.add(fragmentContainer.getId(), loginFragment)
@@ -110,6 +107,10 @@ public class MainActivity extends AppCompatActivity implements IPopularPicturesV
         else {
             // Load PopularPicturesFragment
             PopularPicturesFragment popularPicturesFragment = new PopularPicturesFragment();
+
+            // Update Current Fragment
+            setCurrentFragment(popularPicturesFragment);
+
             transaction.add(fragmentContainer.getId(), popularPicturesFragment)
                     .commit();
         }
@@ -117,7 +118,6 @@ public class MainActivity extends AppCompatActivity implements IPopularPicturesV
 
     /**
      * Automatically Generated Method by Android Studio
-     * I am not supporting any Menu/Settings
      *
      * @param menu
      * @return
@@ -126,12 +126,17 @@ public class MainActivity extends AppCompatActivity implements IPopularPicturesV
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_login, menu);
+
+        // Set the App menu
+        appMenu = menu;
+
+        updateLogOffMenu();
+
         return true;
     }
 
     /**
      * Automatically Generated Method by Android Studio
-     * I am not supporting any Menu/Settings
      *
      * @param item
      * @return
@@ -143,8 +148,15 @@ public class MainActivity extends AppCompatActivity implements IPopularPicturesV
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
 
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
+        if (id == R.id.action_logoff) {
+            // Note: I couldn't find any API to log off from Instagram,
+            // so let's just clear the token
+            SessionManager sessionMgr = new SessionManager(this);
+            sessionMgr.clearAccessToken();
+
+            // Switch to LoginFragment
+            switchToLoginView();
+
             return true;
         }
 
@@ -157,9 +169,103 @@ public class MainActivity extends AppCompatActivity implements IPopularPicturesV
      */
     @Override
     public void switchToPopularPicturesView() {
+        // Allow Rotation by Default
+        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_SENSOR);
+
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
         PopularPicturesFragment popularPicturesFragment = new PopularPicturesFragment();
+
+        // Update Current Fragment
+        setCurrentFragment(popularPicturesFragment);
+
         transaction.replace(fragmentContainer.getId(), popularPicturesFragment)
                    .commit();
+    }
+
+    /**
+     * Method to switch the current Fragment to LoginFragment
+     *
+     */
+    private void switchToLoginView() {
+        // Do Not Allow Rotation for LoginFragment
+        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_NOSENSOR);
+
+        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+        LoginFragment loginFragment = new LoginFragment();
+
+        // Update Current Fragment
+        setCurrentFragment(loginFragment);
+
+        // Set arguments for the Fragment
+        addArgumentsToLoginFragment(loginFragment);
+
+        transaction.replace(fragmentContainer.getId(), loginFragment)
+                .commit();
+    }
+
+    /**
+     * Method to update the Log Off Menu
+     */
+    private void updateLogOffMenu() {
+        if (currentFragment instanceof LoginFragment) {
+            showLogoffMenu(false);
+        }
+        else {
+            showLogoffMenu(true);
+        }
+    }
+
+    /**
+     * Method to show or hide the Logoff Menu
+     *
+     * @param show
+     */
+    private void showLogoffMenu(boolean show) {
+        if(appMenu != null) {
+            MenuItem logOffMenu = appMenu.findItem(R.id.action_logoff);
+
+            if(logOffMenu != null) {
+                if (show) {
+                    logOffMenu.setVisible(true);
+                }
+                else {
+                    logOffMenu.setVisible(false);
+                }
+            }
+        }
+    }
+
+    /**
+     * Method to set current Fragment and update Menu
+     *
+     * @param fragment
+     */
+    private void setCurrentFragment(Fragment fragment) {
+        currentFragment = fragment;
+        updateLogOffMenu();
+    }
+
+    /**
+     * Method to set up the Arguments for LoginFragment
+     *
+     * @param loginFragment
+     */
+    private void addArgumentsToLoginFragment(LoginFragment loginFragment) {
+        Bundle args = new Bundle();
+
+        // Display is used to determine the size of WebView / Dialog
+        // that we want to display for initial step of Instagram
+        // Authentication
+        Display display = getWindow().getWindowManager().getDefaultDisplay();
+        final float scale = getResources().getDisplayMetrics().density;
+
+        float[] dimensions = (display.getWidth() < display.getHeight()) ? Constants.PORTRAIT
+                : Constants.LANDSCAPE;
+
+        args.putInt(LoginFragment.ARGUMENTS_KEY_WIDTH, (int) (dimensions[0] * scale + 0.5f));
+        args.putInt(LoginFragment.ARGUMENTS_KEY_HEIGHT, (int) (dimensions[1] * scale + 0.5f));
+
+        // Set arguments for the Fragment
+        loginFragment.setArguments(args);
     }
 }
