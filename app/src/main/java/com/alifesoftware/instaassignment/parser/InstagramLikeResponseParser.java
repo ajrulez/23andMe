@@ -1,10 +1,14 @@
 package com.alifesoftware.instaassignment.parser;
 
-import org.json.JSONObject;
 import com.alifesoftware.instaassignment.interfaces.ILikeResponseParser;
+
+import org.json.JSONObject;
 
 /**
  * Created by anujsaluja on 6/10/15.
+ *
+ * Parser to parse response for Like request corresponding
+ * to a Like on a Popular Picture
  */
 public class InstagramLikeResponseParser implements ILikeResponseParser {
     @Override

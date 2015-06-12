@@ -11,6 +11,17 @@ import java.util.ArrayList;
 
 /**
  * Created by anujsaluja on 6/10/15.
+ *
+ * Parser to parse response for Popular Pictures request
+ * using standard JSON library. An alternative could
+ * have been to use Google GSON library to parse
+ * the data and create an object from it.
+ *
+ * I generally use JSON Editor
+ * extension for Chrome to visualize a JSON response as it helps
+ * to understand the structure better than looking at raw
+ * JSON file.
+ *
  */
 public class InstagramPopularPictureParserJson implements IPopularImageParser {
     private final static String TAG = "InstagrameParser";
@@ -18,11 +29,20 @@ public class InstagramPopularPictureParserJson implements IPopularImageParser {
     /**
      * For now, I am using standard JSON libraries to
      * parse the data.
-     * <p/>
+     *
      * Another option is to use Gson. If I have time towards the
      * end of this assignment, I will switch to Gson
      */
 
+    /**
+     * Method to parse the response. I generally use JSON Editor
+     * extension for Chrome to visualize a JSON response as it helps
+     * to understand the structure better than looking at raw
+     * JSON file.
+     *
+     * @param jsonObj
+     * @return
+     */
     public ArrayList<PopularPicturesModel> parse(JSONObject jsonObj) {
         if (jsonObj == null ||
                 jsonObj.length() <= 0) {

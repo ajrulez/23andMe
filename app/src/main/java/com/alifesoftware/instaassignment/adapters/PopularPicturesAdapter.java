@@ -193,6 +193,9 @@ public class PopularPicturesAdapter extends ArrayAdapter<PopularPicturesModel> {
                     Picasso.with(appContext).load(imageUrl).into(holder.ivImage);
                 }
                 break;
+
+                default:
+                    // Nothing to do
             }
 
             // Add the ID of the image as a Tag for the button so when
