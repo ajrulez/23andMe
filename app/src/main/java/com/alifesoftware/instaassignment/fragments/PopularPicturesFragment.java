@@ -20,6 +20,7 @@ import com.alifesoftware.instaassignment.adapters.PopularPicturesAdapter;
 import com.alifesoftware.instaassignment.interfaces.IDataRefreshListener;
 import com.alifesoftware.instaassignment.interfaces.ILikeResultListener;
 import com.alifesoftware.instaassignment.interfaces.IPopularPicturesReceiver;
+import com.alifesoftware.instaassignment.model.InstagramErrorModel;
 import com.alifesoftware.instaassignment.model.PopularPicturesModel;
 import com.alifesoftware.instaassignment.tasks.InstagramPictureLikeTask;
 import com.alifesoftware.instaassignment.tasks.InstagramPopularPicturesTask;
@@ -241,9 +242,10 @@ public class PopularPicturesFragment extends Fragment
      *
      * @param success
      * @param button
+     * @param error
      */
     @Override
-    public void onLikeCompleted(boolean success, final Button button) {
+    public void onLikeCompleted(final boolean success, final Button button, final InstagramErrorModel error) {
         if(success &&
                 button != null) {
             handler.postDelayed(new Runnable() {
@@ -252,6 +254,10 @@ public class PopularPicturesFragment extends Fragment
                     button.setEnabled(false);
                 }
             }, UPDATE_DELAY);
+        }
+
+        else if(!success && error != null) {
+            Toast.makeText(getActivity(), error.toString(), Toast.LENGTH_LONG).show();
         }
     }
 

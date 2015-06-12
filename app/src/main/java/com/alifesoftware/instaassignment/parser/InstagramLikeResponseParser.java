@@ -1,6 +1,7 @@
 package com.alifesoftware.instaassignment.parser;
 
 import com.alifesoftware.instaassignment.interfaces.ILikeResponseParser;
+import com.alifesoftware.instaassignment.model.InstagramErrorModel;
 
 import org.json.JSONObject;
 
@@ -18,7 +19,7 @@ public class InstagramLikeResponseParser implements ILikeResponseParser {
         }
 
         try {
-            JSONObject metaObject = jsonObj.getJSONObject("meta");
+            JSONObject metaObject = jsonObj.optJSONObject("meta");
             if (metaObject != null) {
                 int code = metaObject.optInt("code", -1);
                 if (code == 200) {
@@ -31,5 +32,29 @@ public class InstagramLikeResponseParser implements ILikeResponseParser {
         }
 
         return Boolean.FALSE;
+    }
+
+    @Override
+    public InstagramErrorModel parseError(JSONObject jsonError) {
+        if(jsonError == null) {
+            return null;
+        }
+
+        try {
+            JSONObject metaObject = jsonError.optJSONObject("meta");
+            if(metaObject != null) {
+                InstagramErrorModel error = new InstagramErrorModel();
+                error.setErrorType(metaObject.optString("error_type", ""));
+                error.setErrorMessage(metaObject.optString("error_message", ""));
+                error.setErrorCode(metaObject.optInt("code", -1));
+
+                return error;
+            }
+        }
+        catch(Exception e) {
+            e.printStackTrace();
+        }
+
+        return null;
     }
 }

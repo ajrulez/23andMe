@@ -1,5 +1,7 @@
 package com.alifesoftware.instaassignment.interfaces;
 
+import com.alifesoftware.instaassignment.model.InstagramErrorModel;
+
 import org.json.JSONObject;
 
 /**
@@ -11,4 +13,5 @@ import org.json.JSONObject;
  */
 public interface ILikeResponseParser {
     Boolean parse(JSONObject jsonObj);
+    InstagramErrorModel parseError(JSONObject jsonErrorObject);
 }

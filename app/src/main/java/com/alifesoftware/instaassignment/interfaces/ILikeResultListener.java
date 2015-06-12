@@ -2,6 +2,8 @@ package com.alifesoftware.instaassignment.interfaces;
 
 import android.widget.Button;
 
+import com.alifesoftware.instaassignment.model.InstagramErrorModel;
+
 /**
  * Created by anujsaluja on 6/10/15.
  *
@@ -11,5 +13,5 @@ import android.widget.Button;
  *
  */
 public interface ILikeResultListener {
-    void onLikeCompleted(boolean success, Button button);
+    void onLikeCompleted(boolean success, Button button, InstagramErrorModel error);
 }

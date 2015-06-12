@@ -6,6 +6,7 @@ import android.widget.Button;
 
 import com.alifesoftware.instaassignment.businesslogic.SessionManager;
 import com.alifesoftware.instaassignment.interfaces.ILikeResultListener;
+import com.alifesoftware.instaassignment.model.InstagramErrorModel;
 import com.alifesoftware.instaassignment.parser.InstagramLikeResponseParser;
 import com.alifesoftware.instaassignment.utils.Constants;
 import com.alifesoftware.instaassignment.utils.Utils;
@@ -39,6 +40,9 @@ public class InstagramPictureLikeTask extends AsyncTask<String, Void, Boolean> {
     // Button
     private Button button;
 
+    // Error
+    private InstagramErrorModel errorModel = null;
+
     public InstagramPictureLikeTask(Context ctx, Button btn, ILikeResultListener listener) {
         appContext = ctx;
         likeListener = listener;
@@ -70,11 +74,13 @@ public class InstagramPictureLikeTask extends AsyncTask<String, Void, Boolean> {
             return Boolean.FALSE;
         }
 
+        HttpURLConnection urlConnection = null;
+
         try {
             // Construct the Picture Like URL
             String likeUrl = Constants.PICTURE_LIKE_URL.replace("{media-id}", params[0]);
             URL url = new URL(likeUrl);
-            HttpURLConnection urlConnection = (HttpURLConnection) url
+            urlConnection = (HttpURLConnection) url
                     .openConnection();
             urlConnection.setRequestMethod("POST");
             urlConnection.setDoInput(true);
@@ -96,6 +102,19 @@ public class InstagramPictureLikeTask extends AsyncTask<String, Void, Boolean> {
         }
         catch (Exception e) {
             e.printStackTrace();
+
+            // Try to get the Error message from Instagram
+            try {
+                String error = Utils.streamToString(urlConnection.getErrorStream());
+                if(!Utils.isNullOrEmpty(error)) {
+                    JSONObject jsonErrorObj = new JSONObject(error);
+                    InstagramLikeResponseParser parser = new InstagramLikeResponseParser();
+                    errorModel = parser.parseError(jsonErrorObj);
+                }
+            }
+            catch (Exception ex) {
+                ex.printStackTrace();
+            }
         }
 
         return Boolean.FALSE;
@@ -109,7 +128,7 @@ public class InstagramPictureLikeTask extends AsyncTask<String, Void, Boolean> {
     @Override
     protected void onPostExecute(Boolean success) {
         if(likeListener != null) {
-            likeListener.onLikeCompleted(success, button);
+            likeListener.onLikeCompleted(success, button, errorModel);
         }
     }
 }
