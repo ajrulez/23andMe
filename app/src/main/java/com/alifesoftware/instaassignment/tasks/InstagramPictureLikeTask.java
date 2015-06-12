@@ -18,16 +18,14 @@ import java.net.URL;
 
 /**
  * Created by anujsaluja on 6/10/15.
- */
-
-/**
- Note: "Like" a picture feature is not working as the request fails
- with an error. It is likely because even though we are requesting scope=like
- Instagram is not granting that privilege to our AccessToken because they mention
- that they need to review the app for any of the "write" scopes that we request
-
- Link: https://instagram.com/developer/authentication/
- In the above link, see Scope (Permissions) section
+ *
+ * Note: "Like" a picture feature is not working as the request fails
+ * with an error. It is likely because even though we are requesting scope=like
+ * Instagram is not granting that privilege to our AccessToken because they mention
+ * that they need to review the app for any of the "write" scopes that we request
+ *
+ * Link: https://instagram.com/developer/authentication/
+ * In the above link, see Scope (Permissions) section
  */
 
 
@@ -47,20 +45,33 @@ public class InstagramPictureLikeTask extends AsyncTask<String, Void, Boolean> {
         button = btn;
     }
 
+    /**
+     * Background operation to post a Like for a particular
+     * picture
+     *
+     * @param params
+     * @return
+     */
     @Override
     protected Boolean doInBackground(String... params) {
         if(params.length == 0) {
             return Boolean.FALSE;
         }
 
+        // Get the AccessToken from SessionManager/SharedPreferences
         SessionManager sessionManager = new SessionManager(appContext);
         String accessToken = sessionManager.getAccessToken();
 
+        // If the AccessToken is null or empty, then bail out.
+        //
+        // Note: It could be possible that even though we have
+        // AccessToken, it cold be expired
         if(Utils.isNullOrEmpty(accessToken)) {
             return Boolean.FALSE;
         }
 
         try {
+            // Construct the Picture Like URL
             String likeUrl = Constants.PICTURE_LIKE_URL.replace("{media-id}", params[0]);
             URL url = new URL(likeUrl);
             HttpURLConnection urlConnection = (HttpURLConnection) url
@@ -90,10 +101,15 @@ public class InstagramPictureLikeTask extends AsyncTask<String, Void, Boolean> {
         return Boolean.FALSE;
     }
 
+    /**
+     * Signals the completion of background task
+     *
+     * @param success
+     */
     @Override
     protected void onPostExecute(Boolean success) {
         if(likeListener != null) {
-            likeListener.onLikeCompleted(success.booleanValue(), button);
+            likeListener.onLikeCompleted(success, button);
         }
     }
 }

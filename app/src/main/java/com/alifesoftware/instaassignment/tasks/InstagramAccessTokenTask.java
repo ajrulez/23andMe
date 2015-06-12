@@ -3,7 +3,6 @@ package com.alifesoftware.instaassignment.tasks;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.os.AsyncTask;
-import android.util.Log;
 
 import com.alifesoftware.instaassignment.R;
 import com.alifesoftware.instaassignment.interfaces.ITokenResultListener;
@@ -19,6 +18,11 @@ import java.net.URL;
 
 /**
  * Created by anujsaluja on 6/10/15.
+ *
+ * This class is an AsyncTask that is used to complete the
+ * Authentication process for a user and get their
+ * AccessToken
+ *
  */
 public class InstagramAccessTokenTask extends AsyncTask<String, Void, String> {
     // Listener to get the Token Result
@@ -36,6 +40,11 @@ public class InstagramAccessTokenTask extends AsyncTask<String, Void, String> {
         tokenListener = listener;
     }
 
+    /**
+     * Start the ProgressDialog before starting the
+     * background Authentication
+     *
+     */
     @Override
     protected void onPreExecute() {
        // Show Progress Dialog
@@ -46,6 +55,12 @@ public class InstagramAccessTokenTask extends AsyncTask<String, Void, String> {
         }
     }
 
+    /**
+     * Authentication process runs in the background
+     *
+     * @param params
+     * @return
+     */
     @Override
     protected String doInBackground(String... params) {
         if(params.length == 0) {
@@ -84,12 +99,20 @@ public class InstagramAccessTokenTask extends AsyncTask<String, Void, String> {
         return accessToken;
     }
 
+    /**
+     * Signals the end of Authentication process that
+     * was running in the background
+     *
+     * @param accessToken
+     */
     @Override
     protected void onPostExecute(String accessToken) {
+        // Dismiss the ProgressDialog
         if(progressDialog != null) {
             progressDialog.dismiss();
         }
 
+        // Notify the listener of the result of Authentication Process
         if(tokenListener != null) {
             if(Utils.isNullOrEmpty(accessToken)) {
                 tokenListener.onTokenReceived(false, "");
