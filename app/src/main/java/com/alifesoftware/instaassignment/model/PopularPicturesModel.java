@@ -5,6 +5,16 @@ import android.os.Parcelable;
 
 /**
  * Created by anujsaluja on 6/10/15.
+ *
+ * This class serves as a Data Model for Popular Pictures
+ * JSON response that we get from Instagram.
+ *
+ * This class implements a Parcelable because we
+ * want to save this data in a Bundle to avoid
+ * reloading of data when configuration changes, and to
+ * add any custom object to Bundle, it must either implement
+ * a Parcelable or a Serializable
+ *
  */
 public class PopularPicturesModel implements Parcelable  {
 
@@ -15,7 +25,8 @@ public class PopularPicturesModel implements Parcelable  {
     //
     // Picture ID
     // Picture Caption
-    // Picture URL
+    // Picture URL - LowRes
+    // Picture URL - StandadRes/HighRes
     // User has Liked
 
     // ID of the picture
@@ -44,6 +55,14 @@ public class PopularPicturesModel implements Parcelable  {
         return 0;
     }
 
+    /**
+     * Writing to Parcel and Reading from Parcel
+     * must be done in the same order to preserve
+     * the integrity of the data
+     *
+     * @param out
+     * @param flags
+     */
     public void writeToParcel(Parcel out, int flags) {
         out.writeString(pictureId);
         out.writeString(pictureCaption);
@@ -57,6 +76,9 @@ public class PopularPicturesModel implements Parcelable  {
         }
     }
 
+    /**
+     * Parcelable Creator
+     */
     public static final Parcelable.Creator<PopularPicturesModel> CREATOR
             = new Parcelable.Creator<PopularPicturesModel>() {
         public PopularPicturesModel createFromParcel(Parcel in) {
@@ -68,6 +90,13 @@ public class PopularPicturesModel implements Parcelable  {
         }
     };
 
+    /**
+     * Reading frm Parcel must be done in the same order
+     * as Writing to the Parcel to preserve the integrity of
+     * data
+     *
+     * @param in
+     */
     private PopularPicturesModel(Parcel in) {
         pictureId = in.readString();
         pictureCaption = in.readString();

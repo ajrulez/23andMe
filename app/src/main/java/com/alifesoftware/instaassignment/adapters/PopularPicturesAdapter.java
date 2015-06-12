@@ -15,18 +15,40 @@ import com.alifesoftware.instaassignment.R;
 import com.alifesoftware.instaassignment.model.PopularPicturesModel;
 import com.alifesoftware.instaassignment.utils.Constants;
 import com.alifesoftware.instaassignment.viewholders.PopularPicturesViewHolder;
-
-import java.util.ArrayList;
-
 import com.nostra13.universalimageloader.cache.memory.impl.WeakMemoryCache;
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
 import com.nostra13.universalimageloader.core.assist.ImageScaleType;
 import com.nostra13.universalimageloader.core.display.FadeInBitmapDisplayer;
+import com.squareup.picasso.Picasso;
+
+import java.util.ArrayList;
 
 /**
  * Created by anujsaluja on 6/10/15.
+ *
+ * PopularPicturesAdapter is the custom Adapter that is
+ * used to display Popular Pictures and the Like Button
+ * in the ListView
+ *
+ * PopularPicturesAdapter uses Universal Image Loader (UIL)
+ * to support Lazy Loading of images. Note that some methods
+ * of UIL use deprecated APIs.
+ *
+ * Another option is to use Picaso for Lazy Loading, which is
+ * as easy to use as UIL. I have used a configuration flag
+ * that dictates whether we want to use Picaso or UIL
+ *
+ * (Note: Not showing off, I like to treat all my work as
+ * a reference for future, which is why I am keeping both
+ * UIL and Picaso as part of this assignment.
+ *
+ * Please ignore the overhead, I wouldn't usually do this in
+ * production code
+ *
+ * This Adapter uses ViewHolder Pattern for smooth scrolling
+ * of the ListView that is bound to this Adapter
  */
 public class PopularPicturesAdapter extends ArrayAdapter<PopularPicturesModel> {
 
@@ -53,6 +75,9 @@ public class PopularPicturesAdapter extends ArrayAdapter<PopularPicturesModel> {
         this.activity = activity;
         onClickListener = listener;
 
+        /**
+         * Setup Universal Image Loader
+         */
         @SuppressWarnings("deprecation")
         DisplayImageOptions defaultOptions = new DisplayImageOptions.Builder()
                 .cacheOnDisc(true).cacheInMemory(true)
@@ -69,9 +94,15 @@ public class PopularPicturesAdapter extends ArrayAdapter<PopularPicturesModel> {
         ImageLoader.getInstance().init(config);
 
         imageLoader = ImageLoader.getInstance();
+        /**
+         * End Setup UIL
+         */
     }
 
-    // Method to update the Data
+    /**
+     * Method to update the Data for the Adapter
+     * @param data
+     */
     public synchronized void updateData(final ArrayList<PopularPicturesModel> data) {
         try {
             activity.runOnUiThread(new Runnable() {
@@ -79,6 +110,7 @@ public class PopularPicturesAdapter extends ArrayAdapter<PopularPicturesModel> {
                 @Override
                 public void run() {
                     arrPictureData = data;
+                    // Notify that the data has been changed
                     notifyDataSetChanged();
                 }
             });
@@ -89,14 +121,25 @@ public class PopularPicturesAdapter extends ArrayAdapter<PopularPicturesModel> {
         }
     }
 
+    /**
+     * Get the count of data items in the Adapter
+     * @return
+     */
     @Override
     public int getCount() {
         return arrPictureData.size();
     }
 
 
-
-    // getView
+    /**
+     * Implement getView method of the Adapter using
+     * ViewHolder pattern for smooth scrolling
+     *
+     * @param position
+     * @param convertView
+     * @param parent
+     * @return
+     */
     @SuppressLint("InflateParams")
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
@@ -139,7 +182,18 @@ public class PopularPicturesAdapter extends ArrayAdapter<PopularPicturesModel> {
             else {
                 imageUrl = arrPictureData.get(position).getPictureUrl();
             }
-            imageLoader.displayImage(imageUrl, holder.ivImage);
+
+            switch(Constants.lazyLoaderToUse) {
+                case UNIVERSAL_IMAGE_LOADER: {
+                    imageLoader.displayImage(imageUrl, holder.ivImage);
+                }
+                break;
+
+                case SQUARE_PICASO: {
+                    Picasso.with(appContext).load(imageUrl).into(holder.ivImage);
+                }
+                break;
+            }
 
             // Add the ID of the image as a Tag for the button so when
             // the button is clicked, we can get the ID from the button
@@ -157,6 +211,11 @@ public class PopularPicturesAdapter extends ArrayAdapter<PopularPicturesModel> {
         return convertView;
     }
 
+    /**
+     * Get the data/contents of this Adapter
+     *
+     * @return
+     */
     public ArrayList<PopularPicturesModel> getData() {
         return arrPictureData;
     }

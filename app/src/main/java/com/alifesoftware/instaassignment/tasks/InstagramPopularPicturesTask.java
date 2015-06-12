@@ -3,9 +3,7 @@ package com.alifesoftware.instaassignment.tasks;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.os.AsyncTask;
-import android.widget.TextView;
 
-import com.alifesoftware.instaassignment.R;
 import com.alifesoftware.instaassignment.businesslogic.SessionManager;
 import com.alifesoftware.instaassignment.interfaces.IPopularImageParser;
 import com.alifesoftware.instaassignment.interfaces.IPopularPicturesReceiver;
@@ -17,13 +15,16 @@ import com.alifesoftware.instaassignment.utils.Utils;
 import org.json.JSONObject;
 import org.json.JSONTokener;
 
-import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
 
 /**
  * Created by anujsaluja on 6/10/15.
+ *
+ * This class implements/extends an AsyncTask that is used
+ * to get Popular Pictures from Instagram
+ *
  */
 public class InstagramPopularPicturesTask extends AsyncTask<Void, Void, ArrayList<PopularPicturesModel>> {
 
@@ -36,12 +37,23 @@ public class InstagramPopularPicturesTask extends AsyncTask<Void, Void, ArrayLis
     // Context
     private Context appContext;
 
+    /**
+     * Constructor
+     *
+     * @param ctx
+     * @param pdlg
+     * @param rcvr
+     */
     public InstagramPopularPicturesTask(Context ctx, ProgressDialog pdlg, IPopularPicturesReceiver rcvr) {
         appContext = ctx;
         progressDialog = pdlg;
         resultReceiver = rcvr;
     }
 
+    /**
+     * PreExecute shows a ProgressDialog
+     *
+     */
     @Override
     protected void onPreExecute() {
         if(progressDialog != null) {
@@ -49,19 +61,43 @@ public class InstagramPopularPicturesTask extends AsyncTask<Void, Void, ArrayLis
         }
     }
 
+    /**
+     * doInBackground does the Async operation, such as
+     * HTTP communication. In this case, it gets a JSON
+     * response for Popular Pictures request from Instagram
+     * and process that response into a Data Model for
+     * Popular Pictures
+     *
+     * @param params
+     * @return
+     */
     @Override
     protected ArrayList<PopularPicturesModel> doInBackground(Void... params) {
         try {
+            // Create a SessionManager (SharedPreference Wrapper)
             SessionManager sessionManager = new SessionManager(appContext);
+
+            // get the AccessToken from SessionManager, and if it is
+            // null or empty, then bail out because we have to have
+            // a non-Null, not-Empty AccessToken to get Popular Pictures
             String accessToken = sessionManager.getAccessToken();
             if(Utils.isNullOrEmpty(accessToken)) {
                 return null;
             }
 
+            // Construct a URL to get Popular Pictures
             URL url = new URL(Constants.POPULAR_PHOTOS_URL + accessToken);
+
+            // Using Android's HttpURLConnection for HTTP communication.
+            // other reputed options include:
+            //
+            // 1. OkHttp by Square
+            // 2. Volley by Google
+            // 3. DefaultHttpClient by Apache - Deprecated
             HttpURLConnection urlConnection = (HttpURLConnection) url
                     .openConnection();
             urlConnection.setRequestMethod("GET");
+
             String response = Utils.streamToString(urlConnection.getInputStream());
 
             // Convert the String response to JSONObject
@@ -69,6 +105,8 @@ public class InstagramPopularPicturesTask extends AsyncTask<Void, Void, ArrayLis
 
             if(jsonObj != null) {
                 // Using a Factory Pattern just to demonstrate design skills
+                // Not really needed in this case, but imagine if we have different
+                // parsers for the same data (for whatever reason)
                 IPopularImageParser parser = ParserFactory.createParser(ParserFactory.ParserType.PARSER_INSTAGRAM_JSON);
                 if(parser != null) {
                     return parser.parse(jsonObj);
@@ -82,6 +120,13 @@ public class InstagramPopularPicturesTask extends AsyncTask<Void, Void, ArrayLis
         return null;
     }
 
+    /**
+     * Gets called when Async operation is complete. Notifies the
+     * listener with the result of the Async operation, which is Data Model
+     * of Popular Pictures in this case
+     *
+     * @param popularPicturesArray
+     */
     @Override
     protected void onPostExecute(ArrayList<PopularPicturesModel> popularPicturesArray) {
         if(progressDialog != null) {

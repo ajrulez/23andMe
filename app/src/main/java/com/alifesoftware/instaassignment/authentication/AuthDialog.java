@@ -21,6 +21,11 @@ import com.alifesoftware.instaassignment.utils.Constants;
 
 /**
  * Created by anujsaluja on 6/10/15.
+ *
+ * This class is used to create a Dialog that contains
+ * a WebView, which is used for initial Authentication
+ * call for Instagram
+ *
  */
 public class AuthDialog extends Dialog {
     // Authentication Listener
@@ -47,6 +52,14 @@ public class AuthDialog extends Dialog {
     // Height of the Window
     private int windowHeight;
 
+    /**
+     * Constructor for AuthDialog
+     *
+     * @param context
+     * @param width
+     * @param height
+     * @param listener
+     */
     public AuthDialog(Context context, int width, int height,  IAuthDialogListener listener) {
         super(context);
 
@@ -56,10 +69,15 @@ public class AuthDialog extends Dialog {
         authListener = listener;
     }
 
+    /**
+     * Creates the AuthDialog
+     * @param savedInstanceState
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        // Setup a ProgressDialog
         progressDlg = new ProgressDialog(dlgContext);
         progressDlg.requestWindowFeature(Window.FEATURE_NO_TITLE);
         progressDlg.setMessage(dlgContext.getResources().getString(R.string.please_wait));
@@ -78,6 +96,11 @@ public class AuthDialog extends Dialog {
         cookieManager.removeAllCookie();
     }
 
+    /**
+     * Method to set the title of the View that
+     * holds WebView - Just a cosmetic method,
+     * doesn't have any functionality
+     */
     private void setUpTitle() {
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         title = new TextView(dlgContext);
@@ -88,22 +111,39 @@ public class AuthDialog extends Dialog {
         contentHolder.addView(title);
     }
 
+    /**
+     * Method to setup the WebView for Instagram
+     * authentication.
+     *
+     * We must set a client for the WebView to get
+     * data from the WebView
+     */
     private void setUpWebView() {
         authWebView = new WebView(getContext());
         authWebView.setVerticalScrollBarEnabled(false);
         authWebView.setHorizontalScrollBarEnabled(false);
         authWebView.setWebViewClient(new AuthWebViewClient(authListener, this));
         authWebView.getSettings().setJavaScriptEnabled(true);
+
+        // Load the Authentication URL Request in the WebView
+        // This request gets us the Code which we later exchange
+        // to get AccessToken
         authWebView.loadUrl(Constants.AUTH_URL_REQUEST);
         authWebView.setLayoutParams(new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
                 ViewGroup.LayoutParams.MATCH_PARENT));
         contentHolder.addView(authWebView);
     }
 
+    /**
+     * Method to show the ProgressDialog
+     */
     public void showProgressDialog() {
         progressDlg.show();
     }
 
+    /**
+     * Method to dismiss the ProgressDialog
+     */
     public void hideProgressDialog() {
         progressDlg.dismiss();
     }

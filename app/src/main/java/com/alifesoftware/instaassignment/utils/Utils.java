@@ -1,15 +1,22 @@
 package com.alifesoftware.instaassignment.utils;
 
-import java.io.BufferedReader;
-import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.util.Scanner;
 
 /**
  * Created by anujsaluja on 6/10/15.
+ *
+ * This class provides commonly used utilities that
+ * are used at various places in this app
  */
 public class Utils {
+    /**
+     * Method to check whether a String is valid
+     * where a valid String means it is non-Null and not-empty
+     *
+     * @param str
+     * @return
+     */
     public static boolean isNullOrEmpty(String str) {
         if(str == null ||
                 str.isEmpty()) {
@@ -19,6 +26,13 @@ public class Utils {
         return false;
     }
 
+    /**
+     * Method to convert InputStream (retrieved from
+     * a HTTP connection) to String
+     *
+     * @param inputStream
+     * @return
+     */
     public static String streamToString(InputStream inputStream) {
         String response = "";
 

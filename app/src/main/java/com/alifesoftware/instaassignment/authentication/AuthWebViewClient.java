@@ -10,6 +10,10 @@ import com.alifesoftware.instaassignment.utils.Constants;
 
 /**
  * Created by anujsaluja on 6/10/15.
+ *
+ * This class creates a WebClient that is bound
+ * to the WebView which we use for Instagram Authentication.
+ *
  */
 public class AuthWebViewClient extends WebViewClient {
 
@@ -22,12 +26,30 @@ public class AuthWebViewClient extends WebViewClient {
     // Authentication Dialog
     AuthDialog authDialog = null;
 
-
+    /**
+     * Constructor for the WebView Client
+     *
+     * @param listener
+     * @param dialog
+     */
     public AuthWebViewClient(IAuthDialogListener listener, AuthDialog dialog) {
         authListener = listener;
         authDialog = dialog;
     }
 
+    /**
+     * We must overload URL Loading because we want to
+     * capture the redirect when Instagram sends a code
+     * to the redirect URI.
+     *
+     * If we don't do this, the WebView will automatically
+     * get redirected to the redirect URI, and we'll not get
+     * the code in the client
+     *
+     * @param view
+     * @param url
+     * @return
+     */
     @Override
     public boolean shouldOverrideUrlLoading(WebView view, String url) {
         Log.d(TAG, "Redirecting URL " + url);
@@ -41,6 +63,17 @@ public class AuthWebViewClient extends WebViewClient {
         return false;
     }
 
+    /**
+     * Since we are using the WebView for initial Authentication
+     * request, we have no other way of knowing if there is
+     * a problem during server communication. Overriding
+     * this method helps us get the error/exceptions.
+     *
+     * @param view
+     * @param errorCode
+     * @param description
+     * @param failingUrl
+     */
     @Override
     public void onReceivedError(WebView view, int errorCode,
                                 String description, String failingUrl) {
@@ -51,6 +84,14 @@ public class AuthWebViewClient extends WebViewClient {
         authDialog.dismiss();
     }
 
+    /**
+     * Method to indicate that WebView has started to
+     * load a web page.
+     *
+     * @param view
+     * @param url
+     * @param favicon
+     */
     @Override
     public void onPageStarted(WebView view, String url, Bitmap favicon) {
         Log.d(TAG, "Loading URL: " + url);
@@ -59,6 +100,13 @@ public class AuthWebViewClient extends WebViewClient {
         authDialog.showProgressDialog();
     }
 
+    /**
+     * Method to indicate that WebView has finished loading
+     * web page
+     *
+     * @param view
+     * @param url
+     */
     @Override
     public void onPageFinished(WebView view, String url) {
         super.onPageFinished(view, url);
