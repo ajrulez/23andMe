@@ -1,9 +1,10 @@
 package com.alifesoftware.instaassignment.activities;
 
 import android.content.Context;
+import android.content.pm.ActivityInfo;
+import android.os.Bundle;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.view.Display;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -40,7 +41,17 @@ public class MainActivity extends AppCompatActivity implements IPopularPicturesV
         SessionManager sessionMgr = new SessionManager(ctx);
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
 
+        // Allow Rotation by Default
+        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_SENSOR);
+
         if(sessionMgr.getAccessToken() == null) {
+            // We want to disable the rotation when LoginFragment is being
+            // displayed because a lot goes on during LoginFragment lifecycle -
+            // WebView is displayed, ProgressDialog is displayed, and an Authentication
+            // might be in progress. It is easier to block rotation for LoginFragment
+            // than to control other aspects
+            setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_NOSENSOR);
+
             // Load LoginFragment
             LoginFragment loginFragment = new LoginFragment();
             Bundle args = new Bundle();
