@@ -1,6 +1,7 @@
 <resources>
     <string name="app_name">23andMe Assignment</string>
     <string name="action_logoff">Log Off</string>
+    <string name="action_refresh">Refresh</string>
     <string name="like_picture">Like</string>
     <string name="login_text">Login to Instagram</string>
     <string name="please_wait">Please Wait</string>

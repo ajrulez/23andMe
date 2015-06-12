@@ -15,6 +15,7 @@ import com.alifesoftware.instaassignment.R;
 import com.alifesoftware.instaassignment.businesslogic.SessionManager;
 import com.alifesoftware.instaassignment.fragments.LoginFragment;
 import com.alifesoftware.instaassignment.fragments.PopularPicturesFragment;
+import com.alifesoftware.instaassignment.interfaces.IDataRefreshListener;
 import com.alifesoftware.instaassignment.interfaces.IPopularPicturesViewSwitcher;
 import com.alifesoftware.instaassignment.utils.Constants;
 
@@ -72,7 +73,7 @@ public class MainActivity extends AppCompatActivity implements IPopularPicturesV
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
 
         // Allow Rotation by Default
-        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_SENSOR);
+        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_USER);
 
         if(sessionMgr.getAccessToken() == null) {
             // We want to disable the rotation when LoginFragment is being
@@ -80,7 +81,7 @@ public class MainActivity extends AppCompatActivity implements IPopularPicturesV
             // WebView is displayed, ProgressDialog is displayed, and an Authentication
             // might be in progress. It is easier to block rotation for LoginFragment
             // than to control other aspects
-            setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_NOSENSOR);
+            setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
 
             // Load LoginFragment
             LoginFragment loginFragment = new LoginFragment();
@@ -130,7 +131,7 @@ public class MainActivity extends AppCompatActivity implements IPopularPicturesV
         // Set the App menu
         appMenu = menu;
 
-        updateLogOffMenu();
+        updateMenu();
 
         return true;
     }
@@ -148,7 +149,7 @@ public class MainActivity extends AppCompatActivity implements IPopularPicturesV
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
 
-        if (id == R.id.action_logoff) {
+        if(id == R.id.action_logoff) {
             // Note: I couldn't find any API to log off from Instagram,
             // so let's just clear the token
             SessionManager sessionMgr = new SessionManager(this);
@@ -158,6 +159,13 @@ public class MainActivity extends AppCompatActivity implements IPopularPicturesV
             switchToLoginView();
 
             return true;
+        }
+
+        else if(id == R.id.action_refresh) {
+            if(currentFragment instanceof PopularPicturesFragment &&
+                    IDataRefreshListener.class.isAssignableFrom(currentFragment.getClass())) {
+                ((PopularPicturesFragment)currentFragment).refreshData();
+            }
         }
 
         return super.onOptionsItemSelected(item);
@@ -170,7 +178,7 @@ public class MainActivity extends AppCompatActivity implements IPopularPicturesV
     @Override
     public void switchToPopularPicturesView() {
         // Allow Rotation by Default
-        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_SENSOR);
+        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_USER);
 
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
         PopularPicturesFragment popularPicturesFragment = new PopularPicturesFragment();
@@ -187,8 +195,12 @@ public class MainActivity extends AppCompatActivity implements IPopularPicturesV
      *
      */
     private void switchToLoginView() {
-        // Do Not Allow Rotation for LoginFragment
-        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_NOSENSOR);
+    // We want to disable the rotation when LoginFragment is being
+        // displayed because a lot goes on during LoginFragment lifecycle -
+        // WebView is displayed, ProgressDialog is displayed, and an Authentication
+        // might be in progress. It is easier to block rotation for LoginFragment
+        // than to control other aspects
+        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
 
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
         LoginFragment loginFragment = new LoginFragment();
@@ -204,23 +216,23 @@ public class MainActivity extends AppCompatActivity implements IPopularPicturesV
     }
 
     /**
-     * Method to update the Log Off Menu
+     * Method to update the Menu
      */
-    private void updateLogOffMenu() {
+    private void updateMenu() {
         if (currentFragment instanceof LoginFragment) {
-            showLogoffMenu(false);
+            showMenu(false);
         }
         else {
-            showLogoffMenu(true);
+            showMenu(true);
         }
     }
 
     /**
-     * Method to show or hide the Logoff Menu
+     * Method to show or hide Menu items
      *
      * @param show
      */
-    private void showLogoffMenu(boolean show) {
+    private void showMenu(boolean show) {
         if(appMenu != null) {
             MenuItem logOffMenu = appMenu.findItem(R.id.action_logoff);
 
@@ -230,6 +242,17 @@ public class MainActivity extends AppCompatActivity implements IPopularPicturesV
                 }
                 else {
                     logOffMenu.setVisible(false);
+                }
+            }
+
+            MenuItem refreshMenu = appMenu.findItem(R.id.action_refresh);
+
+            if(refreshMenu != null) {
+                if (show) {
+                    refreshMenu.setVisible(true);
+                }
+                else {
+                    refreshMenu.setVisible(false);
                 }
             }
         }
@@ -242,7 +265,7 @@ public class MainActivity extends AppCompatActivity implements IPopularPicturesV
      */
     private void setCurrentFragment(Fragment fragment) {
         currentFragment = fragment;
-        updateLogOffMenu();
+        updateMenu();
     }
 
     /**

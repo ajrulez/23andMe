@@ -17,6 +17,7 @@ import android.widget.Toast;
 
 import com.alifesoftware.instaassignment.R;
 import com.alifesoftware.instaassignment.adapters.PopularPicturesAdapter;
+import com.alifesoftware.instaassignment.interfaces.IDataRefreshListener;
 import com.alifesoftware.instaassignment.interfaces.ILikeResultListener;
 import com.alifesoftware.instaassignment.interfaces.IPopularPicturesReceiver;
 import com.alifesoftware.instaassignment.model.PopularPicturesModel;
@@ -69,6 +70,7 @@ import java.util.ArrayList;
 public class PopularPicturesFragment extends Fragment
                                     implements IPopularPicturesReceiver, // Receives the result when Picture data is retrieved
                                                 ILikeResultListener, // Received the rsult of Like request
+                                                IDataRefreshListener, // To receive Data Refresh Notifications
                                                 View.OnClickListener { // Handler for a Click (Like button click in this case)
     // ListView to display Popular Pictures
     private ListView lvPicturesList;
@@ -251,5 +253,16 @@ public class PopularPicturesFragment extends Fragment
                 }
             }, UPDATE_DELAY);
         }
+    }
+
+    /**
+     * Activity can call this method on the Fragment
+     * to request a refresh data
+     *
+     */
+    @Override
+    public void refreshData() {
+        // Request new set of Popular Pictures
+        requestPopularPhotos();
     }
 }
