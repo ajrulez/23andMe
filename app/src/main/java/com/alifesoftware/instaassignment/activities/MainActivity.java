@@ -263,7 +263,7 @@ public class MainActivity extends AppCompatActivity implements IPopularPicturesV
      *
      * @param fragment
      */
-    private void setCurrentFragment(Fragment fragment) {
+    public void setCurrentFragment(Fragment fragment) {
         currentFragment = fragment;
         updateMenu();
     }

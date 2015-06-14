@@ -16,6 +16,7 @@ import android.widget.ListView;
 import android.widget.Toast;
 
 import com.alifesoftware.instaassignment.R;
+import com.alifesoftware.instaassignment.activities.MainActivity;
 import com.alifesoftware.instaassignment.adapters.PopularPicturesAdapter;
 import com.alifesoftware.instaassignment.interfaces.IDataRefreshListener;
 import com.alifesoftware.instaassignment.interfaces.ILikeResultListener;
@@ -130,6 +131,20 @@ public class PopularPicturesFragment extends Fragment
         progressDialog = new ProgressDialog(getActivity());
         progressDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
         progressDialog.setMessage(getActivity().getResources().getString(R.string.please_wait));
+
+        // If the Fragment is being re-created, associate
+        // the Fragment with the Activity
+        if(savedBundle != null) {
+            // This is not the ideal way to invoke a method of
+            // the Activity. It should be done via an interface where
+            // the MainActivity implements an interface that has the
+            // method - setCurrentFragment. Then we'll check if the
+            // Activity that contains this Fragment implements the interface
+            // before making this call
+            //
+            MainActivity activity = (MainActivity) getActivity();
+            activity.setCurrentFragment(this);
+        }
 
         return view;
     }
