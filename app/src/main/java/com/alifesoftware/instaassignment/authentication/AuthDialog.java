@@ -8,6 +8,8 @@ import android.graphics.Typeface;
 import android.os.Bundle;
 import android.view.ViewGroup;
 import android.view.Window;
+import android.webkit.CookieManager;
+import android.webkit.CookieSyncManager;
 import android.webkit.WebView;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
@@ -86,8 +88,16 @@ public class AuthDialog extends Dialog {
         setUpTitle();
         setUpWebView();
 
-
         addContentView(contentHolder, new LinearLayout.LayoutParams(windowWidth, windowHeight));
+
+        // Once the user Logs Off, and tries to re-login, they will not
+        // be asked for their credentials again because the WebView caches
+        // their credentials. Removing all cookies will ensure that
+        // user is asked for their credentials again when they log off and
+        // re-login
+        CookieSyncManager.createInstance(getContext());
+        CookieManager cookieManager = CookieManager.getInstance();
+        cookieManager.removeAllCookie();
     }
 
     /**
