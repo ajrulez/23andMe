@@ -9,7 +9,7 @@ package com.alifesoftware.instaassignment.utils;
  */
 public class Constants {
     // Endpoint URL to get the Code as first step of Authentication
-    public static final String AUTH_URL = "https://api.instagram.com/oauth/authorize/";
+    public static final String AUTH_URL = "https://api.instagram.com/oauth/authorize";
 
     // Endpoint URL to get AccessToken using the Code
     public static final String TOKEN_URL = "https://api.instagram.com/oauth/access_token";
@@ -53,7 +53,7 @@ public class Constants {
     //
     public static final String TOKEN_URL_REQUEST = Constants.TOKEN_URL + "?client_id=" + Constants.CLIENT_ID + "&client_secret="
             + Constants.CLIENT_SECRET + "&redirect_uri=" + Constants.REDIRECT_URI
-            + "&grant_type=authorization_code&scope=likes";
+            + "&grant_type=authorization_code&response_type=token&scope=likes";
 
     // Request for getting Code from Instagram - First step in the Authentication process
     public static final String AUTH_URL_REQUEST = Constants.AUTH_URL

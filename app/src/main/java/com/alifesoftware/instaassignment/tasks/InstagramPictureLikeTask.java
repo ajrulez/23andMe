@@ -27,6 +27,12 @@ import java.net.URL;
  *
  * Link: https://instagram.com/developer/authentication/
  * In the above link, see Scope (Permissions) section
+ *
+ * I just read more details on Instagram Developers portal, specifically the
+ * page where I set up my Instagram Client, and it clearly states that any
+ * new apps using Instagram API after April 2015 require an approval from
+ * Instagram for likes, comments, posts etc. I'll be sending a screenshot
+ * along with this assignment
  */
 
 

@@ -50,6 +50,12 @@ import java.util.ArrayList;
  * and
  * https://instagram.com/developer/authentication/ (Look at Scope (Permissions)
  *
+ * I just read more details on Instagram Developers portal, specifically the
+ * page where I set up my Instagram Client, and it clearly states that any
+ * new apps using Instagram API after April 2015 require an approval from
+ * Instagram for likes, comments, posts etc. I'll be sending a screenshot
+ * along with this assignment
+ *
  * Note on Authentication / AccessTokens - There could be cases where the AccessToken
  * is saved, but has expired.
  * I haven't had the time to go through entire Instagram Authentication
